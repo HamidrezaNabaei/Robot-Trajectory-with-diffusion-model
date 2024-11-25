@@ -37,6 +37,8 @@ class GuidedPolicy:
 
         normed_observations = trajectories[:, :, self.action_dim:]
         observations = self.normalizer.unnormalize(normed_observations, 'observations')
+        #print(observations.shape)
+        #print(observations[0,0])
 
         trajectories = Trajectories(actions, observations, samples.values)
         return action, trajectories

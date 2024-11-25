@@ -71,14 +71,14 @@ policy = policy_config()
 #-----------------------------------------------------------------------------#
 
 env = dataset.env
-observation = env.reset()
 
+observation = env.reset()
 ## observations for rendering
 rollout = [observation.copy()]
 
 total_reward = 0
 for t in range(args.max_episode_length):
-
+    #observation = env.reset()
     if t % 10 == 0: print(args.savepath, flush=True)
 
     ## save state for rendering only
@@ -94,6 +94,7 @@ for t in range(args.max_episode_length):
     ## print reward and score
     total_reward += reward
     score = env.get_normalized_score(total_reward)
+    #print(observation)
     print(
         f't: {t} | r: {reward:.2f} |  R: {total_reward:.2f} | score: {score:.4f} | '
         f'values: {samples.values} | scale: {args.scale}',

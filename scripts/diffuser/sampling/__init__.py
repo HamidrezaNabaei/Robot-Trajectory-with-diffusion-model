@@ -1,3 +1,3 @@
-from .guides import ValueGuide, CustomGuide
+from .guides import ValueGuide
 from .policies import GuidedPolicy
 from .functions import *

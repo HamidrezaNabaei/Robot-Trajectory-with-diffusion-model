@@ -239,7 +239,7 @@ class ValueDiffusion(GaussianDiffusion):
 
         x_noisy = self.q_sample(x_start=x_start, t=t, noise=noise)
         x_noisy = apply_conditioning(x_noisy, cond, self.action_dim)
-        print(f"Key: {np.shape(x_noisy)},cond {np.shape(cond)}, t {np.shape(t)}")
+        #print(f"Key: {np.shape(x_noisy)},cond {np.shape(cond)}, t {np.shape(t)}")
         pred = self.model(x_noisy, cond, t)
 
         loss, info = self.loss_fn(pred, target)

@@ -200,12 +200,17 @@ class ValueFunction(nn.Module):
         ##
         fc_dim = mid_dim_3 * max(horizon, 1)
 
+        # self.final_block = nn.Sequential(
+        #     nn.Linear(fc_dim + time_dim, fc_dim // 2),
+        #     nn.Mish(),
+        #     nn.Linear(fc_dim // 2, out_dim),
+        # )
         self.final_block = nn.Sequential(
-            nn.Linear(fc_dim + time_dim, fc_dim // 2),
+            #nn.Linear(544, fc_dim // 2),  # Update input dimension to 544
+            nn.Linear(288, fc_dim // 2),  # Update input dimension to 544
             nn.Mish(),
             nn.Linear(fc_dim // 2, out_dim),
         )
-
     def forward(self, x, cond, time, *args):
         '''
             x : [ batch x horizon x transition ]

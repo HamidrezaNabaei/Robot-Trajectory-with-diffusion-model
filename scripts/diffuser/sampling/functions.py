@@ -20,11 +20,13 @@ def n_step_guided_p_sample(
 
         if scale_grad_by_std:
             grad = model_var * grad
-
+        #print("scale", scale)
         grad[t < t_stopgrad] = 0
-
+        #print("x_prev",x)
         x = x + scale * grad
+        
         x = apply_conditioning(x, cond, model.action_dim)
+        #print("x",x)
 
     model_mean, _, model_log_variance = model.p_mean_variance(x=x, cond=cond, t=t)
 

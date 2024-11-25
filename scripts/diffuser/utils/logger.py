@@ -19,7 +19,7 @@ class Logger:
             os.path.join(self.savepath, f'{t}.png'),
             samples.observations,
         )
-
+        return
         ## render video of plans
         self.renderer.render_plan(
             os.path.join(self.savepath, f'{t}_plan.png'),
