@@ -39,12 +39,16 @@ class DatasetNormalizer:
     def normalize(self, data, key):
         if key not in self.mean or key not in self.std:
             raise ValueError(f"Normalization parameters for key '{key}' not found.")
+        print("norm_value",self.mean[key], self.std[key])
         return (data - self.mean[key]) / self.std[key]
 
     def unnormalize(self, data, key):
+        #print("std",self.std[key], "mean",self.mean[key])
         if key not in self.mean or key not in self.std:
             raise ValueError(f"Normalization parameters for key '{key}' not found.")
+        print("mean and std", self.std[key], self.mean[key])
         return data * self.std[key] + self.mean[key]
+        
 
     def __repr__(self):
         string = ''

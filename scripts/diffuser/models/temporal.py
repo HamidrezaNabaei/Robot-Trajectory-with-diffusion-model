@@ -86,8 +86,8 @@ class TemporalUnet(nn.Module):
                 Downsample1d(dim_out) if not is_last else nn.Identity()
             ]))
 
-            if not is_last:
-                horizon = horizon // 2
+            #if not is_last:
+            horizon = horizon // 2
 
         mid_dim = dims[-1]
         self.mid_block1 = ResidualTemporalBlock(mid_dim, mid_dim, embed_dim=time_dim, horizon=horizon)

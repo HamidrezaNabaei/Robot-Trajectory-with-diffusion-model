@@ -3,7 +3,8 @@ import numpy as np
 import torch
 from torch import nn
 import pdb
-
+import os
+import matplotlib.pyplot as plt
 import diffuser.utils as utils
 from .helpers import (
     cosine_beta_schedule,
@@ -170,16 +171,61 @@ class GaussianDiffusion(nn.Module):
             t = make_timesteps(batch_size, i, device)
             x, values = sample_fn(self, x, cond, t, **sample_kwargs)
             x = apply_conditioning(x, cond, self.action_dim)
-
+            #self.save_denoising_step(x, i, 'denoising_steps_2')
             progress.update({'t': i, 'vmin': values.min().item(), 'vmax': values.max().item()})
             if return_chain: chain.append(x)
 
         progress.stamp()
 
         x, values = sort_by_values(x, values)
+        #print(x.shape, values.shape)
+        #print(x)
+        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!", flush = True)
+        #print(f"Values: {values}")
         if return_chain: chain = torch.stack(chain, dim=1)
         return Sample(x, values, chain)
+######
+    def save_denoising_step(self, x, step, save_path):
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
 
+        x_np = x.detach().cpu().numpy()
+        fig, ax = plt.subplots(figsize=(5, 5))
+        grid_size = int(np.sqrt(x_np.shape[-1]))
+        ax.set_xlim(0, grid_size)
+        ax.set_ylim(0, grid_size)
+        ax.set_xticks(np.arange(0, grid_size + 1))
+        ax.set_yticks(np.arange(0, grid_size + 1))
+        ax.grid(True)
+
+        # Draw the trajectory
+        self.draw_trajectory(ax, x_np)
+
+        ax.set_title(f'Denoising Step {step + 1}')
+        plt.axis('equal')
+        plt.tight_layout()
+
+        # Save the image with unique filename including the step number
+        image_path = os.path.join(save_path, f'denoising_step_{step + 1:03d}.png')
+        plt.savefig(image_path)
+        plt.close(fig)
+        print(f'Saved denoising step {step + 1} to {image_path}')
+
+    def draw_trajectory(self, ax, x_np):
+        # Assuming x_np represents positions on a grid (for trajectory visualization)
+        x_positions = x_np[0, :, 0]
+        y_positions = x_np[0, :, 1]
+        ax.plot(x_positions + 0.5, y_positions + 0.5, marker='o', color='blue', markersize=4)
+
+        # Draw starting position
+        start_circle = plt.Circle((x_positions[0] + 0.5, y_positions[0] + 0.5), 0.3, color='red')
+        ax.add_patch(start_circle)
+
+        # Draw goal position (assuming a fixed goal for this example)
+        goal_circle = plt.Circle((5 - 1 + 0.5, 0.5), 0.3, color='green')
+        ax.add_patch(goal_circle)
+
+#######
     @torch.no_grad()
     def conditional_sample(self, cond, horizon=None, **sample_kwargs):
         '''

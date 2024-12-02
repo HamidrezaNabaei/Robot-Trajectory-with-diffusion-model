@@ -215,6 +215,7 @@ class GridWorldRenderer:
             positions = np.array([obs[:2] for obs in path])
             x = positions[:, 0] + 0.5
             y = positions[:, 1] + 0.5
+            print("final_drawing", x,y)
             ax.plot(x, y, marker='o', color='blue')
 
             # Draw starting position

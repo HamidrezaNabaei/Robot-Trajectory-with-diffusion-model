@@ -22,8 +22,8 @@ base = {
         ## model
         'model': 'models.TemporalUnet',
         'diffusion': 'models.GaussianDiffusion',
-        'horizon': 256,
-        'n_diffusion_steps': 1000,
+        'horizon': 40,
+        'n_diffusion_steps': 20,
         'action_weight': 11,
         'loss_weights': None,
         'loss_discount': 1,
@@ -57,7 +57,7 @@ base = {
         'sample_freq': 2000,
         'n_saves': 5,
         'save_parallel': False,
-        'n_reference': 300,
+        'n_reference': 1,
         'bucket': None,
         'device': 'cuda',
         'seed': None,
@@ -66,8 +66,8 @@ base = {
     'values': {
         'model': 'models.ValueFunction',
         'diffusion': 'models.ValueDiffusion',
-        'horizon': 256,
-        'n_diffusion_steps': 600,
+        'horizon': 40,
+        'n_diffusion_steps': 20,
         'dim_mults': (1,2, 4, 8),
         'renderer': 'utils.GridWorldRenderer',
         'attention': True,
@@ -110,9 +110,9 @@ base = {
     'plan': {
         'guide': 'sampling.ValueGuide',
         'policy': 'sampling.GuidedPolicy',
-        'max_episode_length': 10000,
+        'max_episode_length': 1,
         'renderer': 'utils.GridWorldRenderer',
-        'batch_size': 10,
+        'batch_size': 1,
         'preprocess_fns': [],
         'device': 'cuda',
         'seed': None,
@@ -123,8 +123,8 @@ base = {
         #'scale': 0.1,
         #'t_stopgrad': 2,
         #'scale_grad_by_std': True,
-        'n_guide_steps': 1,
-        'scale': 10,
+        'n_guide_steps': 2,
+        'scale': 100000000,
         't_stopgrad': 10,
         'scale_grad_by_std': True,
         ## serialization
@@ -150,7 +150,7 @@ base = {
         'value_epoch': 'latest',
 
         'verbose': True,
-        'suffix': '0',
+        'suffix': '6',
     },
 }
 

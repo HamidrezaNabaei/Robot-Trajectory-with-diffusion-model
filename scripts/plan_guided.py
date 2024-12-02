@@ -71,8 +71,9 @@ policy = policy_config()
 #-----------------------------------------------------------------------------#
 
 env = dataset.env
-
+print("before")
 observation = env.reset()
+print("after")
 ## observations for rendering
 rollout = [observation.copy()]
 
@@ -89,6 +90,8 @@ for t in range(args.max_episode_length):
     action, samples = policy(conditions, batch_size=args.batch_size, verbose=args.verbose)
 
     ## execute action in environment
+    print("actions:",action)
+    
     next_observation, reward, terminal, _ = env.step(action)
 
     ## print reward and score

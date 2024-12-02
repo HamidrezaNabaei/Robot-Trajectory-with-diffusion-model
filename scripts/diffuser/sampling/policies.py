@@ -25,20 +25,25 @@ class GuidedPolicy:
         conditions = self._format_conditions(conditions, batch_size)
 
         ## run reverse diffusion process
+        #samples = self.diffusion_model(conditions, guide=self.guide, verbose=verbose, **self.sample_kwargs)
         samples = self.diffusion_model(conditions, guide=self.guide, verbose=verbose, **self.sample_kwargs)
         trajectories = utils.to_np(samples.trajectories)
 
         ## extract action [ batch_size x horizon x transition_dim ]
         actions = trajectories[:, :, :self.action_dim]
         actions = self.normalizer.unnormalize(actions, 'actions')
+        #print("actions",actions)
 
         ## extract first action
         action = actions[0, 0]
-
+        #action = [action[0], -action[1]]
+        #print("action",action)
+        #print("action_dim",self.action_dim)
+        #print("trajectory",trajectories.shape)
         normed_observations = trajectories[:, :, self.action_dim:]
+        #print("normed_observ",normed_observations.shape)
         observations = self.normalizer.unnormalize(normed_observations, 'observations')
-        #print(observations.shape)
-        #print(observations[0,0])
+        
 
         trajectories = Trajectories(actions, observations, samples.values)
         return action, trajectories

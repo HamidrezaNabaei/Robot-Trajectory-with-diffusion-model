@@ -88,17 +88,24 @@ class RandomObstacleEnv(gym.Env):
         ])
         return state
 
-    def reset2(self):
+    def reset(self):
         self.current_step = 0
         self.grid = np.zeros((self.grid_size, self.grid_size), dtype=np.int8)
         num_obstacles = random.randint(0, self.grid_size * 2)
-        #num_obstacles = random.randint(15,20)
-        for _ in range(num_obstacles):
-            x = random.randint(0, self.grid_size - 1)
-            y = random.randint(0, self.grid_size - 1)
-            self.grid[x, y] = 1  # Place obstacle
-
+        num_obstacles = random.randint(15,20)
+        # for _ in range(num_obstacles):
+        #     x = random.randint(0, self.grid_size - 1)
+        #     y = random.randint(0, self.grid_size - 1)
+        #     self.grid[x, y] = 1  # Place obstacle
+        # Fixed obstacle positions
+        obstacle_positions = [
+            (1, 2), (2, 3), (4, 1), (4, 3)
+        ]
+        #print("reset")
+        for pos in obstacle_positions:
+            self.grid[pos] = 1  # Place obstacle
         while True:
+            #print("randomrandom")
             self.start_pos = (
                 np.random.randint(low=0, high=self.grid_size, dtype='int32'),
                 np.random.randint(low=0, high=self.grid_size, dtype='int32'),
@@ -107,9 +114,12 @@ class RandomObstacleEnv(gym.Env):
                 np.random.randint(low=0, high=self.grid_size, dtype='int32'),
                 np.random.randint(low=0, high=self.grid_size, dtype='int32'),
             )
+            #print(f"Start: {self.start_pos}, Goal: {self.goal_pos}")
+
+            #self.start_pos = (np.int32(3),np.int32(4))
+            #self.goal_pos = (np.int32(2),np.int32(0))
             start_cell = (int(self.start_pos[0]), int(self.start_pos[1]))
             goal_cell = (int(self.goal_pos[0]), int(self.goal_pos[1]))
-
             if (
                 self.grid[start_cell[0], start_cell[1]] == 0
                 and self.grid[goal_cell[0], goal_cell[1]] == 0
@@ -117,13 +127,88 @@ class RandomObstacleEnv(gym.Env):
                 path = self.astar(start_cell, goal_cell)
                 if path is not None:
                     break
+        #self.start_pos = (2.0,0.0)
+        #self.goal_pos = (4.0,4.0)
+        start_cell = (int(self.start_pos[0]), int(self.start_pos[1]))
+        goal_cell = (int(self.goal_pos[0]), int(self.goal_pos[1]))
+        self.position = np.array(self.start_pos, dtype=np.float32)
+        #self.position = np.array(start_cell, dtype=np.float32)
+        #self.path = self.interpolate_path(path)
+        #self.path_index = 0
+
+        return self._get_obs()
+    def reset3(self):
+        self.current_step = 0
+        self.grid = np.zeros((self.grid_size, self.grid_size), dtype=np.int8)
+
+        # Fixed obstacle positions
+        obstacle_positions = [
+            (1, 2), (2, 3), (4, 1), (4, 3)
+        ]
+        for pos in obstacle_positions:
+            self.grid[pos] = 1  # Place obstacle
+
+        # Fixed start and goal positions
+        self.start_pos = np.array((3, 4), dtype=np.int32)  # Green circle position
+        self.goal_pos = np.array((2, 0), dtype=np.int32)  # Orange circle position
+        self.start_pos = (self.start_pos[0], self.start_pos[1])
+        self.goal_pos = (self.goal_pos[0], self.goal_pos[1])
+        start_cell = (int(self.start_pos[0]), int(self.start_pos[1]))
+        goal_cell = (int(self.goal_pos[0]), int(self.goal_pos[1]))
+
+        # Ensure there is a valid path
+        path = self.astar(start_cell, goal_cell)
+
 
         self.position = np.array(self.start_pos, dtype=np.float32)
         self.path = self.interpolate_path(path)
         self.path_index = 0
 
         return self._get_obs()
-    def reset(self):
+    def reset4(self):
+        self.current_step = 0
+        self.grid = np.zeros((self.grid_size, self.grid_size), dtype=np.int8)
+        num_obstacles = random.randint(0, self.grid_size * 2)
+        #num_obstacles = random.randint(15,20)
+        obstacle_positions = [
+            (1, 2), (2, 3), (4, 1), (4, 3)
+        ]
+        for pos in obstacle_positions:
+            self.grid[pos] = 1  # Place obstacle
+        self.start_pos = (3, 4)  # Green circle position
+        self.goal_pos = (2, 0)  # Orange circle position
+        # while True:
+        #     self.start_pos = (
+        #         np.random.randint(low=0, high=self.grid_size, dtype='int32'),
+        #         np.random.randint(low=0, high=self.grid_size, dtype='int32'),
+        #     )
+        #     self.goal_pos = (
+        #         np.random.randint(low=0, high=self.grid_size, dtype='int32'),
+        #         np.random.randint(low=0, high=self.grid_size, dtype='int32'),
+        #     )
+        #     start_cell = (int(self.start_pos[0]), int(self.start_pos[1]))
+        #     goal_cell = (int(self.goal_pos[0]), int(self.goal_pos[1]))
+
+        #     if (
+        #         self.grid[start_cell[0], start_cell[1]] == 0
+        #         and self.grid[goal_cell[0], goal_cell[1]] == 0
+        #     ):
+        #         path = self.astar(start_cell, goal_cell)
+        #         if path is not None:
+        #             break
+        start_cell = (int(self.start_pos[0]), int(self.start_pos[1]))
+        goal_cell = (int(self.goal_pos[0]), int(self.goal_pos[1]))
+
+        # # Ensure there is a valid path (since the setup is fixed, a path must exist)
+        # path = self.astar(start_cell, goal_cell)
+        # if path is None:
+        #     raise ValueError("No valid path found between start and goal in the fixed configuration")
+        self.position = np.array(self.start_pos, dtype=np.float32)
+        #self.path = self.interpolate_path(path)
+        #self.path_index = 0
+
+        return self._get_obs()
+    def reset2(self):
         self.current_step = 0
         self.grid = np.zeros((self.grid_size, self.grid_size), dtype=np.int8)
 
@@ -135,9 +220,27 @@ class RandomObstacleEnv(gym.Env):
             self.grid[pos] = 1  # Place obstacle
 
         # Set start and goal positions
-        self.start_pos = (0, 4)  # Green circle position
-        self.goal_pos = (4, 0)  # Orange circle position
+        self.start_pos = (4, 1)  # Green circle position
+        self.goal_pos = (2, 4)  # Orange circle position
+        while True:
+            self.start_pos = (
+                np.random.randint(low=0, high=self.grid_size-1, dtype='int32'),
+                np.random.randint(low=0, high=1, dtype='int32'),
+            )
+            self.goal_pos = (
+                np.random.randint(low=0, high=1, dtype='int32'),
+                np.random.randint(low=0, high=self.grid_size-1, dtype='int32'),
+            )
+            start_cell = (int(self.start_pos[0]), int(self.start_pos[1]))
+            goal_cell = (int(self.goal_pos[0]), int(self.goal_pos[1]))
 
+            if (
+                self.grid[start_cell[0], start_cell[1]] == 0
+                and self.grid[goal_cell[0], goal_cell[1]] == 0
+            ):
+                path = self.astar(start_cell, goal_cell)
+                if path is not None:
+                    break
         start_cell = (int(self.start_pos[0]), int(self.start_pos[1]))
         goal_cell = (int(self.goal_pos[0]), int(self.goal_pos[1]))
 
@@ -152,12 +255,21 @@ class RandomObstacleEnv(gym.Env):
         return self._get_obs()
     def step(self, action=None):
         reward = 0
-        if self.path is not None and self.path_index < len(self.path) - 1:
-            next_position = self.path[self.path_index + 1]
-            action = np.array(next_position) - self.position
-            self.path_index += 1
+        if action is not None:
+            if self.path is not None and self.path_index < len(self.path) - 1:
+                #next_position = self.path[self.path_index + 1]
+                next_position = self.position + action
+                #action = np.array(next_position) - self.position
+                self.path_index += 1
+            
         else:
-            action = np.zeros(2, dtype=np.float32)
+            if self.path is not None and self.path_index < len(self.path) - 1:
+                next_position = self.path[self.path_index + 1]
+                #next_position = self.position + action
+                action = np.array(next_position) - self.position
+                self.path_index += 1
+            else:
+                action = np.zeros(2, dtype=np.float32)
 
         self.position = np.asarray(self.position, dtype=np.float32).reshape(-1)
         new_position = self.position + action

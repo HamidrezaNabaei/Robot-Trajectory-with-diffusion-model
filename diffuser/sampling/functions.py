@@ -20,8 +20,8 @@ def n_step_guided_p_sample(
 
         if scale_grad_by_std:
             grad = model_var * grad
-            print("grad",grad)
-        print("grad",grad)
+            #print("grad",grad)
+        #print("grad",grad)
         grad[t < t_stopgrad] = 0
 
         x = x + scale * grad
